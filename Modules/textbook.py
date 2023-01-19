@@ -91,4 +91,17 @@ def LUsolve(a,b,seq):
         x[k] = (x[k]-yeet.dot(a[k,k+1:n]))/a[k,k]
     return x
 
-def cramers():
+def cramers(a,b):
+    n = len(b)
+
+    s = yeet.zeros((n))
+    deta = yeet.linalg.det(a)
+    if deta == 0:
+        print('The system is not invertible')
+        return 0
+    for i in range(n):
+        lam = a.copy()
+        a[:,i] = b
+        detai = yeet.linalg.det(lam)
+        s[i] = detai/deta
+    return s
