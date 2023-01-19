@@ -88,7 +88,7 @@ def LUsolve(a,b,seq):
         x[k] = x[k] - yeet.dot(a[k,0:k],x[0:k])
     x[n-1] = x[n-1]/a[n-1,n-1]
     for k in range(n-2,-1,-1):
-        x[k] = (x[k]-yeet.dot(a[k,k+1:n]))/a[k,k]
+        x[k] = (x[k]-yeet.dot(a[k,k+1:n],x[k+1:n]))/a[k,k]
     return x
 
 def cramers(a,b):
@@ -101,7 +101,8 @@ def cramers(a,b):
         return 0
     for i in range(n):
         lam = a.copy()
-        a[:,i] = b
+        lam[:,i] = b[i]
         detai = yeet.linalg.det(lam)
         s[i] = detai/deta
+    s = s.reshape(-1,1)
     return s
