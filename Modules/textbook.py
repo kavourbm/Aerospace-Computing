@@ -90,3 +90,5 @@ def LUsolve(a,b,seq):
     for k in range(n-2,-1,-1):
         x[k] = (x[k]-yeet.dot(a[k,k+1:n]))/a[k,k]
     return x
+
+def cramers():
