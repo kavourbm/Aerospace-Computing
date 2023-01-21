@@ -42,3 +42,11 @@ def get3inputs(one,two,three,prompt0,prompt1,prompt2,prompt3):
         else:
             print("Your input wasn't understood")
             q = input("Please try again. ["+prompt1+"/"+prompt2+"/"+prompt3+"] ")
+
+
+def aravg(array):
+    aver = 0
+    for i in array:
+        aver += i
+    aver = abs(float(aver/len(array)))
+    return aver
