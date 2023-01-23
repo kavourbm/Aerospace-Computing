@@ -91,6 +91,40 @@ def LUsolve(a,b,seq):
         x[k] = (x[k]-yeet.dot(a[k,k+1:n],x[k+1:n]))/a[k,k]
     return x
 
+def LUinverse(decomp):
+    a, seq = decomp[0], decomp[1]
+    n = len(a)
+    identity = yeet.identity(n)
+    y = yeet.zeros((n, n))
+    x = yeet.zeros((n, n))
+    inverse = yeet.zeros((n, n))
+
+    # Solve for y using forward substitution
+    for i in range(n):
+        for j in range(n):
+            if i == j:
+                y[i][j] = 1
+            else:
+                y[i][j] = identity[i][j]
+                for k in range(i):
+                    y[i][j] -= a[i][k] * y[k][j]
+
+    # Solve for x using back substitution
+    for i in range(n - 1, -1, -1):
+        for j in range(n):
+            if i == (n - 1):
+                x[i][j] = y[i][j] / a[i][i]
+            else:
+                x[i][j] = y[i][j]
+                for k in range(i + 1, n):
+                    x[i][j] -= a[i][k] * x[k][j]
+                x[i][j] /= a[i][i]
+
+    # Reorder the columns of x to get the inverse
+    for i in range(n):
+        inverse[:,i] = x[:,seq[i]]
+    return inverse
+
 def cramers(a,b):
     n = len(b)
 
@@ -99,8 +133,8 @@ def cramers(a,b):
     if deta == 0:
         print('The system is not invertible')
         return 0
+    lam = a.copy()
     for i in range(n):
-        lam = a.copy()
         lam[:,i] = b[i]
         detai = yeet.linalg.det(lam)
         s[i] = detai/deta
