@@ -71,7 +71,7 @@ def LUdecomp(a,tol=1.0e-9):
         for i in range(k+1,n):
             if a[i,k] != 0.0:
                 lam = a[i,k]/a[k,k]
-                a[i,k+1:n]-lam*a[k,k+1:n]
+                a[i,k+1:n] = a[i,k+1:n]-lam*a[k,k+1:n]
                 a[i,k] = lam
     return a,seq
 
@@ -110,7 +110,7 @@ def LUinverse(decomp):
                     y[i][j] -= a[i][k] * y[k][j]
 
     # Solve for x using back substitution
-    for i in range(n - 1, -1, -1):
+    for i in range(n-1,-1,-1):
         for j in range(n):
             if i == (n - 1):
                 x[i][j] = y[i][j] / a[i][i]
