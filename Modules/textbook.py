@@ -1,4 +1,5 @@
 import numpy as yeet
+import math
 
 def swapRows(v,i,j):
     if len(v.shape) == 1:
@@ -45,6 +46,40 @@ def gaussPivot(a,b,tol=1.0e-12):
     for k in range(n-2,-1,-1):
         b[k] = (b[k]-yeet.dot(a[k,k+1:n],b[k+1:n]))/a[k,k]
     return b
+
+def gaussSeidel(iterEqs,x,tol=1.0e-9):
+    omega = 1.0
+    k = 10
+    p = 1
+    for i in range(1,501):
+        xOld = x.copy()
+        x = iterEqs(x,omega)
+        dx = math.sqrt(yeet.dot(x-xOld,x-xOld))
+        if dx < tol:
+            return x,i,omega
+        if i == k:
+            dx1 = dx
+        if i == k + p:
+            dx2 = dx
+            omega = 2.0/(1.0+math.sqrt(1.0 - (dx2/dx1)**(1.0/p)))
+    print('Gauss-Seidel failed to converge')
+    return 0
+
+def conjGrad(Av,x,b,tol=1.0e-9):
+    n = len(b)
+    r = b-Av(x)
+    s = r.copy()
+    for i in range(n):
+        u = Av(s)
+        alpha = yeet.dot(s,r)/yeet.dot(s,u)
+        x = x+alpha*s
+        r = b-Av(x)
+        if (math.sqrt(yeet.dot(r,r))) < tol:
+            break
+        else:
+            beta = -yeet.dot(r,u)/yeet.dot(s,u)
+            s = r+beta*s
+    return x,i
 
 def LUdecomp(a,tol=1.0e-9):
     n = len(a)
