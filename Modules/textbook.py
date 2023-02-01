@@ -81,6 +81,13 @@ def conjGrad(Av,x,b,tol=1.0e-9):
             s = r+beta*s
     return x,i
 
+def GS_IterEqs(x,omega):
+    x[0] = omega/4*(15-(-x[1]))+(1-omega)*x[0]
+    x[1] = omega/4*(10-(-x[0]-x[2]))+(1-omega)*x[1]
+    x[2] = omega/4*(10-(-x[1]-x[3]))+(1-omega)*x[2]
+    x[3] = omega/3*(10-(-x[2]))+(1-omega)*x[3]
+    return x
+
 def LUdecomp(a,tol=1.0e-9):
     n = len(a)
     seq = yeet.array(range(n))
