@@ -47,46 +47,21 @@ def gaussPivot(a,b,tol=1.0e-12):
         b[k] = (b[k]-yeet.dot(a[k,k+1:n],b[k+1:n]))/a[k,k]
     return b
 
-def gaussSeidel(a,b,iterEqs,x,tol=1.0e-9):
+def gaussSeidel(iterEqs,x,tol = 1.0e-9):
     omega = 1.0
     k = 10
     p = 1
     for i in range(1,501):
         xOld = x.copy()
-        x = iterEqs(a,b,x,omega)
+        x = iterEqs(x,omega)
         dx = math.sqrt(yeet.dot(x-xOld,x-xOld))
-        if dx < tol:
-            return x,i,omega
-        if i == k:
-            dx1 = dx
-        if i == k+p:
+        if dx < tol: return x,i,omega
+        # Compute relaxation factor after k+p iterations
+        if i == k: dx1 = dx
+        if i == k + p:
             dx2 = dx
-            omega = 2.0/(1.0+math.sqrt(1.0-(dx2/dx1)**(1.0/p)))
-
-def iterEqs(a,b,omega):
-    n = len(b)
-    formulas = yeet.array([])
-    for i in range(n):
-        formula = np.zeros(n)
-        for j in range(n):
-            if i != j:
-                formula[j] = -omega * a[i,j]/a[i,i]
-        formula[i] = 1-omega
-        formulas.append(formula)
-    return formulas
-
-"""
-def gaussSeidel(a,b,x,omega):
-    n = len(b)
-    for k in range(n):
-        xNew = yeet.zeros(n)
-        for i in range(n):
-            s1 = yeet.dot(a[i,:i],xNew[:i])
-            s2 = yeet.dot(a[i,i+1],x[1+1:])
-            xNew[i] = (1-omega)*x[i]+omega*(b[i]-s1-s2)/a[i,i]
-        x = xNew
-    return x
-"""
+            omega = 2.0/(1.0 + math.sqrt(1.0 - (dx2/dx1)**(1.0/p)))
+    print("Gauss-Seidel failed to converge")
 
 def conjGrad(Av,x,b,tol=1.0e-9):
     n = len(b)
