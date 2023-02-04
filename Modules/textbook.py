@@ -55,23 +55,26 @@ def gaussSeidel(iterEqs,x,tol = 1.0e-9):
         xOld = x.copy()
         x = iterEqs(x,omega)
         dx = math.sqrt(yeet.dot(x-xOld,x-xOld))
-        if dx < tol: return x,i,omega
+        if dx < tol:
+            return x,i,omega
+
         # Compute relaxation factor after k+p iterations
-        if i == k: dx1 = dx
+        if i == k:
+            dx1 = dx
         if i == k + p:
             dx2 = dx
             omega = 2.0/(1.0 + math.sqrt(1.0 - (dx2/dx1)**(1.0/p)))
     print("Gauss-Seidel failed to converge")
 
-def conjGrad(Av,x,b,tol=1.0e-9):
+def conjGrad(A,x,b,tol=1.0e-9):
     n = len(b)
-    r = b-Av(x)
+    r = b-yeet.dot(A,x)
     s = r.copy()
     for i in range(n):
-        u = Av(s)
+        u = yeet.dot(A,s)
         alpha = yeet.dot(s,r)/yeet.dot(s,u)
         x = x+alpha*s
-        r = b-Av(x)
+        r = b-yeet.dot(A,x)
         if (math.sqrt(yeet.dot(r,r))) < tol:
             break
         else:
