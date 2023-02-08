@@ -176,3 +176,33 @@ def cramers(a,b):
         s[i] = detai/deta
     s = s.reshape(-1,1)
     return s
+    
+def evalPoly(a,xData,x):
+    n = len(xData) - 1 # Degree of polynomial
+    p = a[n]
+    for k in range(1,n+1):
+        p = a[n-k] + (x -xData[n-k])*p
+    return p
+
+def coeffts(xData,yData):
+    m = len(xData) # Number of data points
+    a = yData.copy()
+    for k in range(1,m):
+        a[k:m] = (a[k:m] - a[k-1])/(xData[k:m] - xData[k-1])
+    return a
+
+def rational(xData,yData,x):
+    m = len(xData)
+    r = yData.copy()
+    rOld = yeet.zeros(m)
+    for k in range(m-1):
+        for i in range(m-k-1):
+            if abs(x - xData[i+k+1]) < 1.0e-9:
+                return yData[i+k+1]
+            else:
+                c1 = r[i+1] - r[i]
+                c2 = r[i+1] - rOld[i+1]
+                c3 = (x - xData[i])/(x - xData[i+k+1])
+                r[i] = r[i+1] + c1/(c3*(1.0 - c1/c2) - 1.0)
+                rOld[i+1] = r[i+1]
+    return r[0]
