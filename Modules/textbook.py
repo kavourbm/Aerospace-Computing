@@ -271,10 +271,10 @@ def polyFit(xData,yData,m):
             a[i,j] = s[i+j]
     return gaussPivot(a,b)
 
-def returnPoly(x,poly):
-    y = yeet.zeros((len(x)))
-    for i in range(len(poly)):
-        y = y + poly[i]*x**i
+def returnPoly(x,coeff):
+    y = yeet.zeros((len(x)))*1.0
+    for i in range(len(coeff)):
+        y = y + coeff[i]*x**i
     return y
 
 def stdDev(c,xData,yData):
