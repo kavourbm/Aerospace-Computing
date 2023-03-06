@@ -1,6 +1,7 @@
 import numpy as yeet
 import math
 import matplotlib.pyplot as plt
+from random import random
 
 def swapRows(v,i,j):
     if len(v.shape) == 1:
@@ -307,3 +308,128 @@ def plotPoly(xData,yData,coeff,xlab='x',ylab='y'):
     plt.legend(["Data","Solution"])
     plt.grid(True)
     plt.show()
+
+def rootsearch(f,a,b,dx):
+    x1 = a; f1 = f(a)
+    x2 = a + dx; f2 = f(x2)
+    while yeet.sign(f1) == yeet.sign(f2):
+        if x1 >= b: return None,None
+        x1 = x2; f1 = f2
+        x2 = x1 + dx; f2 = f(x2)
+    else:
+        return x1,x2
+    
+def bisection(f,x1,x2,switch=1,tol=1.0e-9):
+    f1 = f(x1)
+    if f1 == 0.0: return x1
+    f2 = f(x2)
+    if f2 == 0.0: return x2
+    if yeet.sign(f1) == yeet.sign(f2):
+        print("Root is not bracketed")
+        return 0
+    n = int(math.ceil(math.log(abs(x2 - x1)/tol)/math.log(2.0)))
+    
+    for i in range(n):
+        x3 = 0.5*(x1 + x2); f3 = f(x3)
+        if (switch == 1) and (abs(f3) > abs(f1)) and (abs(f3) > abs(f2)):
+            return None
+        if f3 == 0.0: return x3
+        if yeet.sign(f2) != yeet.sign(f3): x1 = x3; f1 = f3
+        else: x2 = x3; f2 = f3
+    return (x1 + x2)/2.0
+
+def newtonRaphson(f,df,a,b,tol=1.0e-9):
+    fa = f(a)
+    if fa == 0.0: return a
+    fb = f(b)
+    if fb == 0.0: return b
+    if yeet.sign(fa) == yeet.sign(fb): print("Root is not bracketed"); return 0
+    x = 0.5*(a + b)
+    for i in range(30):
+        fx = f(x)
+        if fx == 0.0: return x
+        # Tighten the brackets on the root
+        if yeet.sign(fa) != yeet.sign(fx): b = x
+        else: a = x
+        # Try a Newton-Raphson step
+        dfx = df(x)
+        # If division by zero, push x out of bounds
+        try: dx = -fx/dfx
+        except ZeroDivisionError: dx = b - a
+        x = x + dx
+        # If the result is outside the brackets, use bisection
+        if (b - x)*(x - a) < 0.0:
+            dx = 0.5*(b - a)
+            x = a + dx
+        # Check for convergence
+        if abs(dx) < tol*max(abs(b),1.0): return x
+    print("Too many iterations in Newton-Raphson")
+
+def newtonRaphson2(f,x,tol=1.0e-9):
+
+    def jacobian(f,x):
+        h = 1.0e-4
+        n = len(x)
+        jac = yeet.zeros((n,n))
+        f0 = f(x)
+        for i in range(n):
+            temp = x[i]
+            x[i] = temp + h
+            f1 = f(x)
+            x[i] = temp
+            jac[:,i] = (f1 - f0)/h
+        return jac,f0
+    
+    for i in range(30):
+        jac,f0 = jacobian(f,x)
+        if math.sqrt(yeet.dot(f0,f0)/len(x)) < tol: return x
+        dx = gaussPivot(jac,-f0)
+        x = x + dx
+        if math.sqrt(yeet.dot(dx,dx)) < tol*max(max(abs(x)),1.0):
+            return x
+    print("Too many iterations")
+
+def evalPoly(a,x):
+    n = len(a) - 1
+    p = a[n]
+    dp = 0.0 + 0.0j
+    ddp = 0.0 + 0.0j
+    for i in range(1,n+1):
+        ddp = ddp*x + 2.0*dp
+        dp = dp*x + p
+        p = p*x + a[n-i]
+    return p,dp,ddp
+
+def polyRoots(a,tol=1.0e-12):
+
+    def laguerre(a,tol):
+        x = random() # Starting value (random number)
+        n = len(a) - 1
+        for i in range(30):
+            p,dp,ddp = evalPoly(a,x)
+            if abs(p) < tol: return x
+            g = dp/p
+            h = g*g - ddp/p
+            f = yeet.sqrt((n - 1)*(n*h - g*g))
+            if abs(g + f) > abs(g - f): dx = n/(g + f)
+            else: dx = n/(g - f)
+            x = x - dx
+            if abs(dx) < tol: return x
+        print("Too many iterations")
+    
+    def deflPoly(a,root): # Deflates a polynomial
+        n = len(a)-1
+        b = [(0.0 + 0.0j)]*n
+        b[n-1] = a[n]
+        for i in range(n-2,-1,-1):
+            b[i] = a[i+1] + root*b[i+1]
+        return b
+
+    n = len(a) - 1
+    roots = yeet.zeros((n),dtype=complex)
+    for i in range(n):
+        x = laguerre(a,tol)
+        if abs(x.imag) < tol: x = x.real
+        roots[i] = x
+        a = deflPoly(a,x)
+    return roots

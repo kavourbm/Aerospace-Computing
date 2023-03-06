@@ -1,18 +1,18 @@
-from pygame.locals import *
+#from pygame.locals import *
 import pygame as pg
 import numpy as np
 
 pg.init()
 
 # Screen Variables
-screen_width = 1400
-screen_height = 1200
+screen_width = 1200
+screen_height = 1000
 
 scalef = .01
 
 # Colors
 white = (255, 255, 255)
-grey = (15, 15, 15)
+grey = (25, 25, 25)
 black = (0, 0, 0)
 teal = (0, 255, 255)
 
@@ -24,7 +24,6 @@ pg.display.set_caption('Prime Polars')
 
 clock = pg.time.Clock()
 
-numbers = np.array([0,1,2])
 pnums = np.array([1,2])
 
 locationp = np.array([[0*np.cos(0),0*np.sin(0)], [1*np.cos(1),1*np.sin(1)], [2*np.cos(2),2*np.sin(2)]])
@@ -32,17 +31,17 @@ locationo = np.array([[0,0]])
 
 crashed = False
 i = 2
+z = 0
 
 while not crashed:
     for event in pg.event.get():
-        if event.type == QUIT:
+        if event.type == pg.QUIT:
             crashed = True
-        if event.type == KEYDOWN:
-            if pg.key.get_pressed()[K_ESCAPE]:
+        if event.type == pg.KEYDOWN:
+            if pg.key.get_pressed()[pg.K_ESCAPE]:
                 crashed = True
     screen.fill(black)
     i += 1
-    numbers = np.append(numbers,i)
     tmp = 0
     for a in pnums:
         if a == 1:
@@ -56,15 +55,16 @@ while not crashed:
     if tmp == 1:
         locationp = np.vstack((locationp,[i*np.cos(i),i*np.sin(i)]))
         pnums = np.append(pnums,i)
-    scalef = (numbers[-1])/(screen_height/2)*1.05
+    scalef = i/(screen_height/2)*1.05
     for l in locationo:
-        locx = (l[0]*1/scalef)+(screen_width/2)
-        locy = -1*(l[1]*1/scalef)+(screen_height/2)
-        pg.draw.circle(screen,grey,(locx,locy),1)
+        pg.draw.circle(screen,grey,((l[0]*1/scalef)+(screen_width/2),-1*(l[1]*1/scalef)+(screen_height/2)),1)
+    if len(locationo) > len(locationp)*7.4:
+        locationo = np.delete(locationo,z,axis=0)
+        z += 1
     for p in locationp:
-        locx = (p[0]*1/scalef)+(screen_width/2)
-        locy = -1*(p[1]*1/scalef)+(screen_height/2)
-        pg.draw.circle(screen,teal,(locx,locy),1)
+        pg.draw.circle(screen,teal,((p[0]*1/scalef)+(screen_width/2),-1*(p[1]*1/scalef)+(screen_height/2)),1)
     screen.blit(consolas.render(str(i),True,white),(0,0))
+    screen.blit(consolas.render(str(len(locationo)/len(locationp)),True,white),(0,30))
+    screen.blit(consolas.render(str(len(locationo)+len(locationp)),True,white),(0,15))
     pg.display.update()
-    clock.tick(60)
+    clock.tick(400)
