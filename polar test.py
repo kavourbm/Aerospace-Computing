@@ -12,7 +12,7 @@ scalef = .01
 
 # Colors
 white = (255, 255, 255)
-grey = (25, 25, 25)
+grey = (75, 75, 75)
 black = (0, 0, 0)
 teal = (0, 255, 255)
 
@@ -67,4 +67,4 @@ while not crashed:
     screen.blit(consolas.render(str(len(locationo)/len(locationp)),True,white),(0,30))
     screen.blit(consolas.render(str(len(locationo)+len(locationp)),True,white),(0,15))
     pg.display.update()
-    clock.tick(400)
+    clock.tick(10)

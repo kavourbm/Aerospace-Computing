@@ -34,7 +34,7 @@ m = 1
 q = 1
 crashed = False
 stop_flag = False
-brange = 50000000
+brange = 100000000
 pnums = np.array([True]*(brange+1))
 pnums[0:2] = False
 
@@ -95,9 +95,9 @@ def display_values():
         scalef = m/(screen_height/2)*1.05
         #for l in locationo:
         #    pg.draw.circle(screen,grey,((l[0]*1/scalef)+(screen_width/2),-1*(l[1]*1/scalef)+(screen_height/2)),1)
-        if elapsed_time2 > 120:
-            for p in locationp:
-                pg.draw.circle(screen,teal,((p[0]*1/scalef)+(screen_width/2),-1*(p[1]*1/scalef)+(screen_height/2)),1)
+        #if elapsed_time2 > 120:
+        for p in locationp:
+            pg.draw.circle(screen,teal,((p[0]*1/scalef)+(screen_width/2),-1*(p[1]*1/scalef)+(screen_height/2)),1)
         screen.blit(consolas.render(f"Elapsed Time: {elapsed_time:.2f}s", True, white), (0, 0))
         screen.blit(consolas.render(f"i: {i:.0f}", True, white), (0, 15))
         screen.blit(consolas.render(f"Elapsed Time: {elapsed_time2:.2f}s", True, white), (0, 30))
